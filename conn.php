@@ -2,14 +2,20 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-$hostname = "127.0.0.1";
-$username = "root";
-$password = "";
-$database = "kmart";
+$hostname = getenv('DB_HOST') ?: "127.0.0.1";
+$username = getenv('DB_USER') ?: "root";
+$password = getenv('DB_PASS') !== false ? getenv('DB_PASS') : "";
+$database = getenv('DB_NAME') ?: "kmart";
+$port     = getenv('DB_PORT') ? (int)getenv('DB_PORT') : 3306;
 
-$con = mysqli_connect($hostname, $username, $password, $database);
+$con = mysqli_connect($hostname, $username, $password, $database, $port);
 
 if (!$con) {
-    die("Database Connection Failed: " . mysqli_connect_error());
+    die("<div style='font-family:Arial,sans-serif;padding:20px;background:#1a1a2e;color:#fff;border-radius:8px;max-width:600px;margin:50px auto;text-align:center;'>
+        <h2 style='color:#ff4757;'>⚠️ Database Connection Error</h2>
+        <p>Could not connect to MySQL database.</p>
+        <p style='color:#a4b0be;font-size:13px;'>Error: " . mysqli_connect_error() . "</p>
+        <p style='font-size:14px;'>Make sure MySQL is running in XAMPP (Local) or Cloud Database environment variables are set (Vercel/Hosting).</p>
+    </div>");
 }
 ?>
