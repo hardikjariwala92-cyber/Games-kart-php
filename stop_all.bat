@@ -1,4 +1,5 @@
 @echo off
+setlocal EnableDelayedExpansion
 title GameKart - Stop All Services
 color 0C
 
@@ -8,7 +9,17 @@ echo                    Stopping All Services
 echo ====================================================================
 echo.
 
-set "XAMPP_DIR=C:\xamppneww"
+:: Detect XAMPP Directory dynamically
+set "XAMPP_DIR="
+if exist "%~dp0..\..\apache\bin\httpd.exe" (
+    for %%I in ("%~dp0..\..") do set "XAMPP_DIR=%%~fI"
+) else if exist "D:\xampp\apache\bin\httpd.exe" (
+    set "XAMPP_DIR=D:\xampp"
+) else if exist "C:\xampp\apache\bin\httpd.exe" (
+    set "XAMPP_DIR=C:\xampp"
+) else if exist "C:\xamppneww\apache\bin\httpd.exe" (
+    set "XAMPP_DIR=C:\xamppneww"
+)
 
 :: 1. Stop Apache Web Server
 echo [1/2] Stopping Apache Web Server...
@@ -24,8 +35,8 @@ if "%ERRORLEVEL%"=="0" (
 echo [2/2] Stopping MySQL Database Server...
 tasklist /FI "IMAGENAME eq mysqld.exe" 2>NUL | find /I /N "mysqld.exe">NUL
 if "%ERRORLEVEL%"=="0" (
-    if exist "%XAMPP_DIR%\mysql\bin\mysqladmin.exe" (
-        "%XAMPP_DIR%\mysql\bin\mysqladmin.exe" -u root shutdown >nul 2>&1
+    if defined XAMPP_DIR if exist "!XAMPP_DIR!\mysql\bin\mysqladmin.exe" (
+        "!XAMPP_DIR!\mysql\bin\mysqladmin.exe" -u root shutdown >nul 2>&1
     )
     taskkill /F /IM mysqld.exe >nul 2>&1
     echo       * MySQL Database Server stopped.
