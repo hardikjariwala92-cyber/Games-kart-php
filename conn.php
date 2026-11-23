@@ -28,11 +28,16 @@ if (!$con) {
 }
 
 if (!$con) {
-    die("<div style='font-family:Arial,sans-serif;padding:20px;background:#1a1a2e;color:#fff;border-radius:8px;max-width:600px;margin:50px auto;text-align:center;'>
-        <h2 style='color:#ff4757;'>⚠️ Database Connection Error</h2>
-        <p>Could not connect to MySQL database.</p>
-        <p style='color:#a4b0be;font-size:13px;'>Error: " . htmlspecialchars(mysqli_connect_error()) . "</p>
-        <p style='font-size:14px;'>Make sure MySQL is running in XAMPP on port $port.</p>
+    $isVercel = getenv('VERCEL') !== false || isset($_SERVER['VERCEL']);
+    $hostMsg = $isVercel 
+        ? "<b>Running on Vercel:</b> Please configure your Cloud MySQL database environment variables (<code>DB_HOST</code>, <code>DB_USER</code>, <code>DB_PASS</code>, <code>DB_NAME</code>, <code>DB_PORT</code>) in your Vercel Project Settings." 
+        : "Make sure MySQL is running in XAMPP on port $port.";
+
+    die("<div style='font-family:Arial,sans-serif;padding:30px;background:#17121a;color:#fff;border-radius:12px;max-width:650px;margin:50px auto;text-align:center;border:1px solid #ce5cff;box-shadow:0 8px 30px rgba(206,92,255,0.2);'>
+        <h2 style='color:#ce5cff;margin-bottom:12px;'>🎮 GameKart Database Setup</h2>
+        <p style='color:#e2e8f0;font-size:15px;'>Could not connect to MySQL database.</p>
+        <p style='color:#a0aec0;font-size:13px;background:rgba(255,255,255,0.05);padding:10px;border-radius:6px;word-break:break-all;'>Error: " . htmlspecialchars(mysqli_connect_error()) . "</p>
+        <p style='font-size:14px;color:#cbd5e1;line-height:1.6;'>$hostMsg</p>
     </div>");
 }
 

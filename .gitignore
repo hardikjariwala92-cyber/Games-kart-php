@@ -33,3 +33,5 @@ php_errors.log
 __pycache__/
 *.py[cod]
 *$py.class
+
+.vercel
